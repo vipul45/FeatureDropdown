@@ -1,13 +1,27 @@
-<h1>Single Commponent</h1>
-<app-feature-dropdown [optionGroups]="optionGroups"></app-feature-dropdown>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<h1>Multi Select</h1>
-<app-feature-dropdown [optionGroups]="optionGroups" [isMultiSelect]="true"></app-feature-dropdown>
+<div class="form-container">
+    <h2 class="form-heading">Awesome Form</h2>
+    <div class="form-content">
+      <div class="form-section">
+        <label for="singleSelect">Single Select:</label>
+        <app-feature-dropdown [dopt]="dOpt" (selectedOption)="recievedOption($event)"></app-feature-dropdown>
+        <span *ngIf="submitted">Selected Value: {{selectedValue}}</span>
+      </div>
+  
+      <div class="form-section">
+        <label for="multiSelect">Multi-Select:</label>
+        <app-feature-dropdown [dopt]="dOpt" [isMultiSelect]="true"
+                              (selectedOptions)="recievedOptions($event)"></app-feature-dropdown>
+        <span *ngIf="submitted && datas.length > 0">
+          <div class="selected-values-container">
+            <ul>
+              <li *ngFor="let data of datas">{{data}}</li>
+            </ul>
+          </div>
+        </span>
+      </div>
+    </div>
+  
+    <form #userForm="ngForm" (ngSubmit)="submitForm()">
+      <button type="submit" class="submit-button">Submit</button>
+    </form>
+  </div>

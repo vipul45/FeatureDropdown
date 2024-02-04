@@ -1,29 +1,32 @@
 <div class="dropdown-container">
-    <div *ngIf="isMultiSelect; else singleSelect" (click)="toggleDropdown()" class="button button-with-chips" [tabindex]="selectedValues.length > 0 ? -1 : 0">
-      <span *ngFor="let selectedOption of selectedValues" class="chip">
-        {{ selectedOption }}
-        <span class="remove-option" (click)="removeOption(selectedOption)">✕</span>
-      </span>
-      {{ selectedValues.length ? '' : 'Select options' }}
-    </div>
-    <ng-template #singleSelect>
-      <button (click)="toggleDropdown()">
-        {{ selectedValue || 'Select an option' }}
-      </button>
-    </ng-template>
-    <div *ngIf="isDropdownOpen" class="dropdown-options">
-      <input class="searchInput" type="text" placeholder="Search" (input)="onSearchInputChange($event)" />
-      <div *ngFor="let group of filteredOptionGroups()">
-        <div class="group-header">
-          <li
-            *ngFor="let option of group.filteredOptions"
-            (click)="handleOptionClick(option)"
-            [ngClass]="{ 'last-selected': isLastSelected(option), 'selected': isOptionSelected(option) }"
-          >
-            {{ option }}
-          </li>
-        </div>
-      </div>
-    </div>
+  <div *ngIf="isMultiSelect; else singleSelect" (click)="toggleDropdown()" class="button button-with-chips" [tabindex]="selectedValues.length > 0 ? -1 : 0">
+    <span *ngFor="let selectedOption of selectedValues" class="chip">
+      {{ selectedOption }}
+      <span class="remove-option" (click)="removeOption(selectedOption)">✕</span>
+    </span>
+    {{ selectedValues.length ? '' : 'Select options' }}
   </div>
-  
+  <ng-template #singleSelect>
+    <div class="button button-with-chips" (click)="toggleDropdown()">
+      {{ selectedValue || 'Select an option' }}
+    </div>
+  </ng-template>
+
+  <div *ngIf="isDropdownOpen" class="dropdown-options">
+    <input class="searchInput" type="text" placeholder="Search" (input)="onSearchInputChange($event)" />
+    <cdk-virtual-scroll-viewport
+        itemSize="50"
+        class="virtual-scroll-container">
+          <div
+            *cdkVirtualFor="let option of dopt | filterOptions: searchInput"
+            (click)="handleOptionClick(option.text)"
+            class="virtual-scroll-item"
+            [ngClass]="{ 'last-selected': isLastSelected(option.text), 'selected': isOptionSelected(option.text) }"
+          >
+          <li value="option.value">
+            {{ option.text }}
+          </li>
+          </div>
+    </cdk-virtual-scroll-viewport>
+  </div>
+</div>

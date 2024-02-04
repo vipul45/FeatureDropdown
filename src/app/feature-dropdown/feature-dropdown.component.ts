@@ -1,5 +1,8 @@
-import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
 import { FilterOptionsPipe } from '../filter-options.pipe';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { DropdownOption } from '../util/dropdown-option';
+
 @Component({
   selector: 'app-feature-dropdown',
   templateUrl: './feature-dropdown.component.html',
@@ -7,18 +10,22 @@ import { FilterOptionsPipe } from '../filter-options.pipe';
 })
 export class FeatureDropdownComponent {
   @ViewChild('button', { static: true }) button: ElementRef | undefined;
+  @ViewChild(CdkVirtualScrollViewport, { static: true }) viewport: CdkVirtualScrollViewport | undefined;
   @Input() isMultiSelect: boolean = false;
-  @Input() optionGroups: { groupName: string, options: string[] }[] = [];
-
+  @Input() dopt: DropdownOption[] = [];
+  @Output() selectedOption: EventEmitter<string> = new EventEmitter();
+  @Output() selectedOptions: EventEmitter<string[]> = new EventEmitter<string[]>();
 
   selectedValue = '';
   lastSelectedOption = '';
   selectedValues: string[] = [];
   isDropdownOpen = false;
-  searchInput = '';
+  searchInput: string;
 
 
-  constructor(private elementRef: ElementRef, private filterOptionsPipe: FilterOptionsPipe) {}
+  constructor(private elementRef: ElementRef, private filterOptionsPipe: FilterOptionsPipe) {
+    console.log(this.dopt)
+  }
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
@@ -43,12 +50,16 @@ export class FeatureDropdownComponent {
 
     this.isDropdownOpen = false;
     this.updateChipsClass();
+    this.selectedOptions.emit(this.selectedValues);
+    this.searchInput = '';
   }
 
   selectOption(option: string): void {
     this.selectedValue = option;
     this.lastSelectedOption = option;
+    this.selectedOption.emit(this.selectedValue);
     this.isDropdownOpen = false;
+    this.searchInput = '';
   }
 
   isOptionSelected(option: string): boolean {
@@ -67,19 +78,12 @@ export class FeatureDropdownComponent {
     this.searchInput = (event.target as HTMLInputElement).value;
   }
 
-  filteredOptionGroups() {
-    return this.optionGroups
-      .map(group => ({
-        ...group,
-        filteredOptions: this.filterOptionsPipe.transform(group.options, this.searchInput),
-      }))
-      .filter(group => group.filteredOptions.length > 0);
-  }
 
   removeOption(option: string): void {
     this.selectedValues = this.selectedValues.filter(val => val !== option);
     this.searchInput = '';
     this.updateChipsClass();
+    this.selectedOptions.emit(this.selectedValues);
   }
 
   private updateChipsClass(): void {

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DropdownOption } from './util/dropdown-option';
 
 @Component({
   selector: 'app-root',
@@ -7,15 +8,44 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'dropdown';
-  optionGroups = [
-    {
-      groupName: 'Group 1',
-      options: ['Option 1A', 'Option 1B', 'Option 1C']
-    },
-    {
-      groupName: 'Group 2',
-      options: ['Option 2A', 'Option 2B', 'Option 2C']
-    },
-    // Add more groups as needed
-  ];
+  submitted = false;
+  datas: string[] = [];
+  selectedValue:string='';
+  selectedValues:any = [];
+  opti: string[] = [];
+  optionGroups:string[]=[]
+  formData = {
+    name: '',
+    email: ''
+  };
+  
+  dOpt: DropdownOption[] = [] 
+
+  constructor(){
+    for (let index = 0; index < 1000000; index++) {
+      const newOption: DropdownOption = {
+        id: index + 1,
+        value:'index ' + (index+1),
+        text: 'option ' + (index+1)
+      }
+      this.dOpt.push(newOption);
+    }
+  }
+
+  
+  recievedOption(data: string) {
+    this.selectedValue = data 
+  }
+  recievedOptions(datas: string[]) {
+    this.datas = datas
+  }
+  
+
+
+  submitForm(): void {
+    console.log('Submitted',this.datas );
+    this.submitted = true;
+  }
+  
+  
 }

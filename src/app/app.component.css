@@ -1,38 +1,62 @@
-.ng-select-custom {
-    width: fit-content;
-    height: 2rem; 
-    padding-top: .4%;
-    padding-left: 1% ;
-    padding-right: 1%;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-  }
+.form-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-  .ng-select-custom .ng-select-container {
-    border: 1px solid #6c757d;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-family: inherit;
-  }
+.form-heading {
+  text-align: center;
+  color: #333;
+}
 
-  .ng-select-custom .ng-select-container .ng-value-container {
-    padding: 6px 8px;
-  }
+.form-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
 
-  .ng-select-custom .ng-select-container .ng-value-container .ng-input {
-    height: 32px;
-    line-height: 30px;
-  }
+.form-section {
+  flex: 1;
+  margin: 0 10px 20px 0;
+}
 
-  .ng-select-custom .ng-select-container .ng-placeholder {
-    color: #6c757d;
-  }
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
 
-  .ng-select-custom .ng-select-container .ng-arrow-wrapper::after {
-    content: '';
-    display: inline-block;
-    border-top: 5px solid #6c757d;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    margin-top: -1px;
-  }
+span {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.selected-values-container {
+  padding: 0;
+  list-style: none;
+}
+
+.selected-values-container li {
+  background-color: #4CAF50;
+  color: white;
+  padding: 8px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+}
+
+.submit-button {
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
