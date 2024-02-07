@@ -11,12 +11,14 @@ import { FilterOptionsPipe } from './filter-options.pipe';
 import { FormsModule } from '@angular/forms';
 
 import { ScrollingModule} from '@angular/cdk/scrolling';
+import { ChipsComponent } from './feature-dropdown/chips/chips.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FeatureDropdownComponent,
     FilterOptionsPipe,
+    ChipsComponent,
 
     
   ],

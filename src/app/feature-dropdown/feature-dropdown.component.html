@@ -1,19 +1,27 @@
 <div class="dropdown-container">
-  <div *ngIf="isMultiSelect; else singleSelect" (click)="toggleDropdown()" class="button button-with-chips" [tabindex]="selectedValues.length > 0 ? -1 : 0">
-    <span *ngFor="let selectedOption of selectedValues" class="chip">
-      {{ selectedOption }}
-      <span class="remove-option" (click)="removeOption(selectedOption)">✕</span>
-    </span>
-    {{ selectedValues.length ? '' : 'Select options' }}
-  </div>
+  <div *ngIf="isMultiSelect; else singleSelect" 
+        (click)="toggleDropdown()" 
+        class="button button-with-chips" 
+        [tabindex]="selectedValues.length > 0 ? -1 : 0">
+        <app-chips *ngFor="let selectedOption of selectedValues" 
+                    [value]="selectedOption" 
+                    (removeChip)="removeOption($event)"></app-chips>
+        <input type="text" 
+                [(ngModel)]="searchInput" 
+                class="multiSelectInput" 
+                id="search_box" 
+                placeholder="Search..." 
+                (input)="onSearchInputChange($event)" />  
+      </div>
   <ng-template #singleSelect>
-    <div class="button button-with-chips" (click)="toggleDropdown()">
-      {{ selectedValue || 'Select an option' }}
-    </div>
+    <input type="text" 
+            class="button searchInput" 
+            (click)="toggleDropdown()" 
+            placeholder="Select value" 
+            value="{{ selectedValue  }}" 
+            (input)="onSearchInputChange($event)"/>
   </ng-template>
-
   <div *ngIf="isDropdownOpen" class="dropdown-options">
-    <input class="searchInput" type="text" placeholder="Search" (input)="onSearchInputChange($event)" />
     <cdk-virtual-scroll-viewport
         itemSize="50"
         class="virtual-scroll-container">
