@@ -18,7 +18,7 @@
             class="button searchInput" 
             (click)="toggleDropdown()" 
             placeholder="Select value" 
-            value="{{ selectedValue  }}" 
+            value="{{ selectedValue}}" 
             (input)="onSearchInputChange($event)"/>
   </ng-template>
   <div *ngIf="isDropdownOpen" class="dropdown-options">
@@ -26,10 +26,10 @@
         itemSize="50"
         class="virtual-scroll-container">
           <div
-            *cdkVirtualFor="let option of dopt | filterOptions: searchInput"
-            (click)="handleOptionClick(option.text)"
+            *cdkVirtualFor="let option of data | filterOptions: searchInput"
+            (click)="handleOptionClick(option)"
             class="virtual-scroll-item"
-            [ngClass]="{ 'last-selected': isLastSelected(option.text), 'selected': isOptionSelected(option.text) }"
+            [ngClass]="{ 'last-selected': isLastSelected(option), 'selected': isOptionSelected(option) }"
           >
           <li value="option.value">
             {{ option.text }}

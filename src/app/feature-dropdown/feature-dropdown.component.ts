@@ -12,26 +12,26 @@ export class FeatureDropdownComponent {
   @ViewChild('button', { static: true }) button: ElementRef | undefined;
   @ViewChild(CdkVirtualScrollViewport, { static: true }) viewport: CdkVirtualScrollViewport | undefined;
   @Input() isMultiSelect: boolean = false;
-  @Input() dopt: DropdownOption[] = [];
-  @Output() selectedOption: EventEmitter<string> = new EventEmitter();
-  @Output() selectedOptions: EventEmitter<string[]> = new EventEmitter<string[]>();
+  @Input() data: DropdownOption[] = [];
+  @Output() selectedOption: EventEmitter<DropdownOption> = new EventEmitter();
+  @Output() selectedOptions: EventEmitter<DropdownOption[]> = new EventEmitter<DropdownOption[]>();
 
-  selectedValue = '';
-  lastSelectedOption = '';
-  selectedValues: string[] = [];
+  selectedValue:string;
+  lastSelectedOption :DropdownOption;
+  selectedValues: DropdownOption[] = [];
   isDropdownOpen = false;
   searchInput: string;
 
 
   constructor(private elementRef: ElementRef, private filterOptionsPipe: FilterOptionsPipe) {
-    console.log(this.dopt)
+    console.log(this.data)
   }
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
-  handleOptionClick(option: string): void {
+  handleOptionClick(option: DropdownOption): void {
     if (this.isMultiSelect) {
       this.toggleOption(option);
     } else {
@@ -39,7 +39,7 @@ export class FeatureDropdownComponent {
     }
   }
 
-  toggleOption(option: string): void {
+  toggleOption(option: DropdownOption): void {
     const isSelected = this.selectedValues.includes(option);
 
     if (isSelected) {
@@ -54,19 +54,19 @@ export class FeatureDropdownComponent {
     this.searchInput = '';
   }
 
-  selectOption(option: string): void {
-    this.selectedValue = option;
+  selectOption(option: DropdownOption): void {
+    this.selectedValue = option.text;
     this.lastSelectedOption = option;
-    this.selectedOption.emit(this.selectedValue);
+    this.selectedOption.emit(option);
     this.isDropdownOpen = false;
     this.searchInput = '';
   }
 
-  isOptionSelected(option: string): boolean {
+  isOptionSelected(option: DropdownOption): boolean {
     return this.selectedValues.includes(option);
   }
 
-  isLastSelected(option: string): boolean {
+  isLastSelected(option: DropdownOption): boolean {
     if (this.isMultiSelect){
     return option === this.selectedValues[this.selectedValues.length - 1];
   }else {
@@ -79,7 +79,7 @@ export class FeatureDropdownComponent {
   }
 
 
-  removeOption(option: string): void {
+  removeOption(option: DropdownOption): void {
     this.selectedValues = this.selectedValues.filter(val => val !== option);
     this.searchInput = '';
     this.updateChipsClass();
@@ -91,7 +91,7 @@ export class FeatureDropdownComponent {
       const hasChips = this.selectedValues.length > 0;
       this.button.nativeElement.classList.toggle('has-chips', hasChips);
     }
-  }
+    }
 
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: Event) {

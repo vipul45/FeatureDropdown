@@ -47,7 +47,7 @@
   
   
   .last-selected {
-    background-color: lightgray;
+    background-color: grey;
   }
   
   .searchInput {
@@ -69,11 +69,6 @@
     margin: 0px 2px 2px 2px;
     border-radius: 7px;
     background-color: lightgrey;
-  }
-  
-  .chip:hover {
-    background-color: rgb(2, 103, 255);
-    color: white;
   }
   
   .remove-option {
@@ -100,7 +95,7 @@
   }
   
   .dropdown-options li.selected {
-    background-color: lightgray;
+    background-color: grey;
   }
   .virtual-scroll-container {
     height: 300px;
@@ -112,5 +107,9 @@
     min-width: 0;
     border: none;
     outline: none;
+  }
+  .selected {
+    background-color: grey;
+    color: white;
   }
   

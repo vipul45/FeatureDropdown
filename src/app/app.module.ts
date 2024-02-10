@@ -13,6 +13,8 @@ import { FormsModule } from '@angular/forms';
 import { ScrollingModule} from '@angular/cdk/scrolling';
 import { ChipsComponent } from './feature-dropdown/chips/chips.component';
 
+import { ReactiveFormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,7 +29,8 @@ import { ChipsComponent } from './feature-dropdown/chips/chips.component';
     AppRoutingModule,
     FormsModule,
     ScrollingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ReactiveFormsModule
   ],
   providers: [
     provideClientHydration(),

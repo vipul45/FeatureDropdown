@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { DropdownOption } from '../../util/dropdown-option';
 
 @Component({
   selector: 'app-chips',
@@ -7,9 +8,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class ChipsComponent {
   @Input()
-  chipText!: string;
-  @Input() value: string | undefined;
-  @Output() removeChip: EventEmitter<string> = new EventEmitter<string>();
+  chipText!: DropdownOption;
+  @Input() value: DropdownOption;
+  @Output() removeChip: EventEmitter<DropdownOption> = new EventEmitter<DropdownOption>();
 
   removeOption(): void {
     this.removeChip.emit(this.value); // Emitting the value of the chip to the parent component

@@ -3,14 +3,11 @@
     padding: 5px 10px;
     margin: 5px;
     border-radius: 7px;
-    background-color: lightgray;
+    background-color: rgb(2, 103, 255);
     color: white;
     cursor: pointer;
   }
   
-  .chip:hover {
-    background-color: rgb(2, 103, 255);
-  }
   
   .remove-option {
     margin-left: 5px;

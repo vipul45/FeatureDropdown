@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { DropdownOption } from './util/dropdown-option';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -8,43 +9,55 @@ import { DropdownOption } from './util/dropdown-option';
 })
 export class AppComponent {
   title = 'dropdown';
+  myForm: FormGroup;
   submitted = false;
-  datas: string[] = [];
-  selectedValue:string='';
-  selectedValues:any = [];
-  opti: string[] = [];
-  optionGroups:string[]=[]
+  datas: DropdownOption[] = [];
+  selectedValue:DropdownOption;
+  selectedValues:DropdownOption;
   formData = {
     name: '',
     email: ''
   };
   
-  dOpt: DropdownOption[] = [] 
+  data: DropdownOption[] = [] 
 
-  constructor(){
+  constructor(private fb: FormBuilder){
     for (let index = 0; index < 1000000; index++) {
       const newOption: DropdownOption = {
         id: index + 1,
         value:'index ' + (index+1),
         text: 'option ' + (index+1)
       }
-      this.dOpt.push(newOption);
+      this.data.push(newOption);
     }
   }
 
+  ngOnInit(): void {
+    this.myForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      dropdown: [null, Validators.required]
+    });
+  }
+  onDropdownOptionSelected(option: any) {
+    // Update the form control with the selected option
+    this.myForm.get('dropdown').setValue(option.value);
+  }
   
-  recievedOption(data: string) {
+  recievedOption(data: DropdownOption) {
     this.selectedValue = data 
+    this.myForm.get('dropdown').setValue(data);
   }
-  recievedOptions(datas: string[]) {
-    this.datas = datas
-  }
-  
 
 
-  submitForm(): void {
-    console.log('Submitted',this.datas );
-    this.submitted = true;
+
+  onSubmit() {
+    if (this.myForm.valid) {
+      console.log('Form submitted:', this.myForm.value);
+      // Handle form submission here
+    } else {
+      console.error('Form is invalid.');
+    }
   }
   
   

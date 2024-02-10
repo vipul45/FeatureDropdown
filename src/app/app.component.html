@@ -1,27 +1,16 @@
-<div class="form-container">
-    <h2 class="form-heading">Awesome Form</h2>
-    <div class="form-content">
-      <div class="form-section">
-        <label for="singleSelect">Single Select:</label>
-        <app-feature-dropdown [dopt]="dOpt" (selectedOption)="recievedOption($event)"></app-feature-dropdown>
-        <span *ngIf="submitted">Selected Value: {{selectedValue}}</span>
-      </div>
-  
-      <div class="form-section">
-        <label for="multiSelect">Multi-Select:</label>
-        <app-feature-dropdown [dopt]="dOpt" [isMultiSelect]="true"
-                              (selectedOptions)="recievedOptions($event)"></app-feature-dropdown>
-        <span *ngIf="submitted && datas.length > 0">
-          <div class="selected-values-container">
-            <ul>
-              <li *ngFor="let data of datas">{{data}}</li>
-            </ul>
-          </div>
-        </span>
-      </div>
+
+  <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label>Name:</label>
+      <input type="text" formControlName="name">
     </div>
-  
-    <form #userForm="ngForm" (ngSubmit)="submitForm()">
-      <button type="submit" class="submit-button">Submit</button>
-    </form>
-  </div>
+    <div>
+      <label>Email:</label>
+      <input type="email" formControlName="email">
+    </div>
+    <div>
+      <label>Custom Dropdown:</label>
+      <app-feature-dropdown [data]="data" (selectedOption)="recievedOption($event)"></app-feature-dropdown>
+    </div>
+    <button type="submit" [disabled]="myForm.invalid">Submit</button>
+  </form>
