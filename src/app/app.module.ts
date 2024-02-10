@@ -15,6 +15,8 @@ import { ChipsComponent } from './feature-dropdown/chips/chips.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
 
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +32,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     ScrollingModule,
     BrowserAnimationsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FontAwesomeModule
   ],
   providers: [
     provideClientHydration(),

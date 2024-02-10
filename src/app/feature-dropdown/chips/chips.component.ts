@@ -4,7 +4,7 @@ import { DropdownOption } from '../../util/dropdown-option';
 @Component({
   selector: 'app-chips',
   templateUrl: './chips.component.html',
-  styleUrl: './chips.component.css'
+  styleUrls: ['./chips.component.css']
 })
 export class ChipsComponent {
   @Input()
