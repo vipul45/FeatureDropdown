@@ -9,8 +9,12 @@
       <input type="email" formControlName="email">
     </div>
     <div>
-      <label>Custom Dropdown:</label>
+      <label>single Select Dropdown:</label>
       <app-feature-dropdown [data]="data" (selectedOption)="recievedOption($event)"></app-feature-dropdown>
+    </div>
+    <div>
+      <label>Multi Select Dropdown:</label>
+      <app-feature-dropdown [data]="data" [isMultiSelect]="true" (selectedOptions)="recievedOptions($event)"></app-feature-dropdown>
     </div>
     <button type="submit" [disabled]="myForm.invalid">Submit</button>
   </form>

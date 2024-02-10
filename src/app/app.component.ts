@@ -36,7 +36,8 @@ export class AppComponent {
     this.myForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      dropdown: [null, Validators.required]
+      dropdown: [null, Validators.required],
+      multiDropdown:[null, Validators.required]
     });
   }
   onDropdownOptionSelected(option: any) {
@@ -47,6 +48,11 @@ export class AppComponent {
   recievedOption(data: DropdownOption) {
     this.selectedValue = data 
     this.myForm.get('dropdown').setValue(data);
+  }
+  recievedOptions(data: DropdownOption[])
+  {
+    this.datas=data;
+    this.myForm.get('multiDropdown').setValue(data);
   }
 
 
