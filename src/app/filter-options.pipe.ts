@@ -10,7 +10,7 @@ export class FilterOptionsPipe implements PipeTransform {
       return options;
     }
 
-    const searchTerm = searchInput.toLowerCase();
-    return options.filter(option => option.text.toLowerCase().includes(searchTerm));
+    const searchTerm = searchInput.replace(/\s/g, '').toLowerCase(); // Remove spaces from search input
+    return options.filter(option => option.text.replace(/\s/g, '').toLowerCase().includes(searchTerm)); // Remove spaces from option text before comparison
   }
 }
