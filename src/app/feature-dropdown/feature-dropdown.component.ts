@@ -6,7 +6,7 @@ import { DropdownOption } from '../util/dropdown-option';
 @Component({
   selector: 'app-feature-dropdown',
   templateUrl: './feature-dropdown.component.html',
-  styleUrl: './feature-dropdown.component.css'
+  styleUrls: ['./feature-dropdown.component.css']
 })
 export class FeatureDropdownComponent {
   @ViewChild('button', { static: true }) button: ElementRef | undefined;
@@ -21,14 +21,16 @@ export class FeatureDropdownComponent {
   selectedValues: DropdownOption[] = [];
   isDropdownOpen = false;
   searchInput: string;
+  hoveredOptionIndex = -1;
+  chosenOption:  DropdownOption;
 
-
-  constructor(private elementRef: ElementRef, private filterOptionsPipe: FilterOptionsPipe) {
-    console.log(this.data)
-  }
+  constructor(private elementRef: ElementRef, private filterOptionsPipe: FilterOptionsPipe) {}
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
+    if (!this.isDropdownOpen) {
+      this.hoveredOptionIndex = -1; // Reset hovered option index when dropdown is closed
+    }
   }
 
   handleOptionClick(option: DropdownOption): void {
@@ -45,9 +47,11 @@ export class FeatureDropdownComponent {
     if (isSelected) {
       this.selectedValues = this.selectedValues.filter(val => val !== option);
     } else {
-      this.selectedValues = [...this.selectedValues, option];
+        if(option.id !== null){
+          this.selectedValues = [...this.selectedValues, option];
+      }
     }
-
+    this.hoveredOptionIndex = -1;
     this.isDropdownOpen = false;
     this.updateChipsClass();
     this.selectedOptions.emit(this.selectedValues);
@@ -55,6 +59,7 @@ export class FeatureDropdownComponent {
   }
 
   selectOption(option: DropdownOption): void {
+    this.chosenOption = option;
     this.selectedValue = option.text;
     this.lastSelectedOption = option;
     this.selectedOption.emit(option);
@@ -68,16 +73,15 @@ export class FeatureDropdownComponent {
 
   isLastSelected(option: DropdownOption): boolean {
     if (this.isMultiSelect){
-    return option === this.selectedValues[this.selectedValues.length - 1];
-  }else {
-    return option === this.lastSelectedOption;
+      return option === this.selectedValues[this.selectedValues.length - 1];
+    } else {
+      return option === this.lastSelectedOption;
+    }
   }
-}
 
   onSearchInputChange(event: Event): void {
     this.searchInput = (event.target as HTMLInputElement).value;
   }
-
 
   removeOption(option: DropdownOption): void {
     this.selectedValues = this.selectedValues.filter(val => val !== option);
@@ -91,7 +95,7 @@ export class FeatureDropdownComponent {
       const hasChips = this.selectedValues.length > 0;
       this.button.nativeElement.classList.toggle('has-chips', hasChips);
     }
-    }
+  }
 
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: Event) {
@@ -100,4 +104,33 @@ export class FeatureDropdownComponent {
     }
   }
 
+  // Handle keyboard events
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (this.isDropdownOpen && this.data.length > 0) {
+      if (event.key === 'Escape'){
+        this.isDropdownOpen = false;
+      }
+      else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        // Navigate through options with arrow keys
+        event.preventDefault(); // Prevent scrolling the page
+        const direction = event.key === 'ArrowDown' ? 1 : -1;
+        this.hoveredOptionIndex = this.getValidIndex(this.hoveredOptionIndex !== null ? this.hoveredOptionIndex + direction : direction);
+      } else if (event.key === 'Enter' && this.hoveredOptionIndex !== null) {
+        // Select the hovered option on Enter key press
+        this.handleOptionClick(this.data[this.hoveredOptionIndex]);
+      }
+    }
+  }
+
+  // Get valid index considering circular navigation
+  private getValidIndex(index: number): number {
+    if (index < 0) {
+      return this.data.length - 1;
+    } else if (index >= this.data.length) {
+      return 0;
+    } else {
+      return index;
+    }
+  }
 }

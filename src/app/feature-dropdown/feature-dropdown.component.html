@@ -11,7 +11,8 @@
                 class="multiSelectInput" 
                 id="search_box" 
                 placeholder="Search..." 
-                (input)="onSearchInputChange($event)" />  
+                (input)="onSearchInputChange($event)"
+                autocomplete="off" />  
       </div>
   <ng-template #singleSelect>
     <input type="text" 
@@ -19,15 +20,20 @@
             (click)="toggleDropdown()" 
             placeholder="Select value" 
             value="{{ selectedValue}}" 
-            (input)="onSearchInputChange($event)"/>
+            (input)="onSearchInputChange($event)"
+            autocomplete="off">
   </ng-template>
   <div *ngIf="isDropdownOpen" class="dropdown-options">
     <cdk-virtual-scroll-viewport
         itemSize="50"
         class="virtual-scroll-container">
           <div
-            *cdkVirtualFor="let option of data | filterOptions: searchInput"
+            *cdkVirtualFor="let option of data | filterOptions: searchInput; let i = index"
             (click)="handleOptionClick(option)"
+            [class.hovered]="i === hoveredOptionIndex"
+            [class.selected]="isOptionSelected(option)"
+            (mouseenter)="hoveredOptionIndex = i"
+            (mouseleave)="hoveredOptionIndex = -1"
             class="virtual-scroll-item"
             [ngClass]="{ 'last-selected': isLastSelected(option), 'selected': isOptionSelected(option) }"
           >

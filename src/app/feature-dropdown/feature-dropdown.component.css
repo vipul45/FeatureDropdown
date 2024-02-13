@@ -1,117 +1,174 @@
-/* merged-dropdown.component.css */
+/* feature-dropdown.component.css */
+
+.multiselect-container {
+  position: relative;
+  width: 200px;
+}
+
+.selected-options {
+  border: 1px solid #ccc;
+  padding: 5px;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.selected-option {
+  background-color: #e0e0e0;
+  padding: 2px 5px;
+  margin: 2px;
+  border-radius: 3px;
+}
+
+.dropdown-toggle {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.dropdown-option {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.dropdown-option:hover {
+  background-color: blue;
+}
+
+.dropdown-option.selected {
+  background-color: #e0e0e0;
+}
+
+.hovered {
+  background-color: blue;
+}
+
+/* Add your existing styles here */
 .button {
-    padding: 2px;
-    width: 100%;
-    text-align: left;
-    height: fit-content;
-    min-height: 2.5rem;
-    background-color: white;
-    border-radius: 7px;
-    border: 1px solid lightgrey;
-  }
-  
-  .dropdown-container {
-    position: relative;
-  }
-  
-  .dropdown-options {
-    z-index: 1000;
-    position: absolute;
-    width: 100%;
-    max-height: 150px;
-    overflow-y: hidden;
-    overflow-x: hidden;
-    left: 0;
-    background-color: white;
-    list-style: none;
-    padding: 0;
-    border: 1px solid gray;
-    border-radius: 7px;
-  }
-  
-  .dropdown-options li {
-    list-style-type: none;
-    padding: 5px 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  
-  .dropdown-options li input {
-    margin-right: 10px;
-  }
-  
-  li:hover {
-    background-color: rgb(2, 103, 255);
-    color: aliceblue;
-  }
-  
-  
-  .last-selected {
-    background-color: rgb(2, 103, 255);
-    color: aliceblue;
-  }
-  
-  .searchInput {
-    border: 1px solid lightgrey;
-    border-radius: 7px;
-    margin: 0.5%;
-    width: 98.5%;
-    height: 1.7rem;
-  }
-  
-  .option-container {
-    margin-bottom: 5px;
-  }
-  
-  .chip {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    margin: 0px 2px 2px 2px;
-    border-radius: 7px;
-    background-color: lightgrey;
-  }
-  
-  .remove-option {
-    cursor: pointer;
-    margin-left: 5px;
-  }
-  
-  .button-with-chips {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    outline: none;
-    cursor: pointer;
-  }
-  
-  .button-with-chips.has-chips {
-    pointer-events: none;
-    border: 1px lightgrey solid;
-  }
-  
-  .button-with-chips.not-interactive {
-    pointer-events: none;
-    cursor: none;
-  }
-  
-  .dropdown-options li.selected {
-    background-color: grey;
-  }
-  .virtual-scroll-container {
-    height: 300px;
-    width: 100%;
-  }
-  .multiSelectInput{
-    width: 100% !important;
-    flex: 1;
-    min-width: 0;
-    border: none;
-    outline: none;
-  }
-  .selected {
-    background-color: rgb(2, 103, 255);
-    color: aliceblue;
-  }
-  
+  padding: 2px;
+  width: 100%;
+  text-align: left;
+  height: fit-content;
+  min-height: 2.5rem;
+  background-color: white;
+  border-radius: 7px;
+  border: 1px solid lightgrey;
+}
+
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-options {
+  z-index: 1000;
+  position: absolute;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  left: 0;
+  background-color: white;
+  list-style: none;
+  padding: 0;
+  border: 1px solid gray;
+  border-radius: 7px;
+}
+
+.dropdown-options li {
+  list-style-type: none;
+  padding: 5px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-options li input {
+  margin-right: 10px;
+}
+
+li:hover {
+  background-color: rgb(2, 103, 255);
+  color: aliceblue;
+}
+
+.last-selected {
+  background-color: rgb(2, 103, 255);
+  color: aliceblue;
+}
+
+.searchInput {
+  border: 1px solid lightgrey;
+  border-radius: 7px;
+  margin: 0.5%;
+  width: 98.5%;
+  height: 1.7rem;
+}
+
+.option-container {
+  margin-bottom: 5px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  margin: 0px 2px 2px 2px;
+  border-radius: 7px;
+  background-color: lightgrey;
+}
+
+.remove-option {
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.button-with-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  outline: none;
+  cursor: pointer;
+}
+
+.button-with-chips.has-chips {
+  pointer-events: none;
+  border: 1px lightgrey solid;
+}
+
+.button-with-chips.not-interactive {
+  pointer-events: none;
+  cursor: none;
+}
+
+.dropdown-options li.selected {
+  background-color: grey;
+}
+
+.virtual-scroll-container {
+  height: 300px;
+  width: 100%;
+}
+
+.multiSelectInput {
+  width: 100% !important;
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+}
+
+.selected {
+  background-color: rgb(2, 103, 255);
+  color: aliceblue;
+}
