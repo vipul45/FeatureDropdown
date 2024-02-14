@@ -12,7 +12,8 @@
                 id="search_box" 
                 placeholder="Search..." 
                 (input)="onSearchInputChange($event)"
-                autocomplete="off" />  
+                autocomplete="off"
+                (keypress)="onEnterPress($event)" />  
       </div>
   <ng-template #singleSelect>
     <input type="text" 

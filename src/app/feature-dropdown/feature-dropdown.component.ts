@@ -104,6 +104,12 @@ export class FeatureDropdownComponent {
     }
   }
 
+  @HostListener('document:keydown',['$event'])
+  onEnterPress(event: KeyboardEvent) {
+    if(!this.isDropdownOpen && event.key === 'Enter'){
+      this.isDropdownOpen = !this.isDropdownOpen;
+    }
+  }
   // Handle keyboard events
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
