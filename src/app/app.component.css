@@ -20,13 +20,16 @@
 .form-group input[type="email"],
 .form-group textarea,
 .form-group select {
+  outline: none;
   width: 100%;
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-
+input{
+  outline: none;
+}
 /* Submit button */
 .btn-submit {
   display: inline-block;

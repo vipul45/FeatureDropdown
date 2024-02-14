@@ -172,3 +172,6 @@ li:hover {
   background-color: rgb(2, 103, 255);
   color: aliceblue;
 }
+.button {
+  outline: none;
+}
