@@ -22,7 +22,8 @@
             placeholder="Select value" 
             value="{{ selectedValue}}" 
             (input)="onSearchInputChange($event)"
-            autocomplete="off">
+            autocomplete="off"
+            (keypress)="onEnterPress($event)" />
   </ng-template>
   <div *ngIf="isDropdownOpen" class="dropdown-options">
     <cdk-virtual-scroll-viewport
