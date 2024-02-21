@@ -2,15 +2,16 @@ import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewC
 import { FilterOptionsPipe } from '../filter-options.pipe';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { DropdownOption } from '../util/dropdown-option';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-feature-dropdown',
   templateUrl: './feature-dropdown.component.html',
-  styleUrls: ['./feature-dropdown.component.css']
+  styleUrls: ['./feature-dropdown.component.css'],
 })
 export class FeatureDropdownComponent {
   @ViewChild('button', { static: true }) button: ElementRef | undefined;
-  @ViewChild(CdkVirtualScrollViewport, { static: true }) viewport: CdkVirtualScrollViewport | undefined;
+  @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport | undefined;
   @Input() isMultiSelect: boolean = false;
   @Input() data: DropdownOption[] = [];
   @Output() selectedOption: EventEmitter<DropdownOption> = new EventEmitter();
@@ -60,9 +61,9 @@ export class FeatureDropdownComponent {
 
   selectOption(option: DropdownOption): void {
     this.chosenOption = option;
-    this.selectedValue = option.text;
-    this.lastSelectedOption = option;
-    this.selectedOption.emit(option);
+    this.selectedValue = this.chosenOption.text;
+    this.lastSelectedOption = this.chosenOption;
+    this.selectedOption.emit(this.chosenOption);
     this.isDropdownOpen = false;
     this.searchInput = '';
   }
@@ -108,31 +109,61 @@ export class FeatureDropdownComponent {
   onEnterPress(event: KeyboardEvent) {
     if(!this.isDropdownOpen && event.key === 'Enter'){
       this.isDropdownOpen = !this.isDropdownOpen;
-    }
+      }
   }
   // Handle keyboard events
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (this.isDropdownOpen && this.data.length > 0) {
-      if (event.key === 'Escape'){
+      if (event.key === 'Escape') {
         this.isDropdownOpen = false;
-      }
-      else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-        // Navigate through options with arrow keys
+        this.hoveredOptionIndex = -1;
+      } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
         event.preventDefault(); // Prevent scrolling the page
         const direction = event.key === 'ArrowDown' ? 1 : -1;
         this.hoveredOptionIndex = this.getValidIndex(this.hoveredOptionIndex !== null ? this.hoveredOptionIndex + direction : direction);
+  
+        if (this.hoveredOptionIndex >= 0 && this.hoveredOptionIndex < this.data.length) {
+          const threshold = 4; // Define your threshold here
+          if (this.hoveredOptionIndex >= threshold) {
+            // Calculate the start and end index for the viewport
+            const startIndex = Math.max(0, this.hoveredOptionIndex - threshold);
+            const endIndex = Math.min(this.data.length - 1, this.hoveredOptionIndex + threshold);
+            this.setViewportIndices(startIndex, endIndex);
+          }
+        }
       } else if (event.key === 'Enter' && this.hoveredOptionIndex !== null) {
-        // Select the hovered option on Enter key press
         this.handleOptionClick(this.data[this.hoveredOptionIndex]);
+      } else if (event.key === 'Backspace') {
+        event.preventDefault(); // Prevent browser navigation
+        if (this.isMultiSelect && this.selectedValues.length > 0) {
+          // Remove the last selected option
+          const lastSelectedOption = this.selectedValues.pop();
+          // Emit the updated selected options
+          this.selectedOptions.emit(this.selectedValues);
+          // Optionally, emit an event indicating that the last selected option was removed
+        } else if (!this.isMultiSelect && this.selectedValue) {
+          this.lastSelectedOption = null;
+          this.selectedOption.emit(this.chosenOption);
+          this.isDropdownOpen = false;
+          this.hoveredOptionIndex = -1;
+        }
       }
     }
   }
+  
+  setViewportIndices(startIndex: number, endIndex: number): void {
+    if (this.viewport) {
+      // Adjust the data source based on the start and end indices
+      this.viewport.setRenderedRange({ start: startIndex, end: endIndex });
+    }
+  }
+  
 
   // Get valid index considering circular navigation
   private getValidIndex(index: number): number {
     if (index < 0) {
-      return this.data.length - 1;
+      return 0;
     } else if (index >= this.data.length) {
       return 0;
     } else {

@@ -25,24 +25,18 @@
             autocomplete="off"
             (keypress)="onEnterPress($event)" />
   </ng-template>
-  <div *ngIf="isDropdownOpen" class="dropdown-options">
-    <cdk-virtual-scroll-viewport
-        itemSize="50"
-        class="virtual-scroll-container">
-          <div
-            *cdkVirtualFor="let option of data | filterOptions: searchInput; let i = index"
-            (click)="handleOptionClick(option)"
-            [class.hovered]="i === hoveredOptionIndex"
-            [class.selected]="isOptionSelected(option)"
-            (mouseenter)="hoveredOptionIndex = i"
-            (mouseleave)="hoveredOptionIndex = -1"
-            class="virtual-scroll-item"
-            [ngClass]="{ 'last-selected': isLastSelected(option), 'selected': isOptionSelected(option) }"
-          >
-          <li value="option.value">
-            {{ option.text }}
-          </li>
-          </div>
-    </cdk-virtual-scroll-viewport>
-  </div>
+<div *ngIf="isDropdownOpen" class="dropdown-options">
+  <cdk-virtual-scroll-viewport itemSize="28" class="virtual-scroll-container" >
+    <div *cdkVirtualFor="let option of data | filterOptions: searchInput; let i = index"
+         (click)="handleOptionClick(option)"
+         [class.hovered]="i === hoveredOptionIndex"
+         [class.selected]="isOptionSelected(option)"
+         (mouseenter)="hoveredOptionIndex = i"
+         (mouseleave)="hoveredOptionIndex = -1"
+         class="virtual-scroll-item"
+         [ngClass]="{ 'last-selected': option === lastSelectedOption, 'selected': isOptionSelected(option) }">
+      <li value="option.value">{{ option.text }}</li>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>
 </div>
