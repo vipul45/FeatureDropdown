@@ -25,7 +25,7 @@ export class FeatureDropdownComponent {
   hoveredOptionIndex = -1;
   chosenOption:  DropdownOption;
 
-  constructor(private elementRef: ElementRef, private filterOptionsPipe: FilterOptionsPipe) {}
+  constructor(private elementRef: ElementRef) {}
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;

@@ -20,7 +20,7 @@
             class="button searchInput" 
             (click)="toggleDropdown()" 
             placeholder="Select value" 
-            value="{{ selectedValue}}" 
+            [value]="selectedValue" 
             (input)="onSearchInputChange($event)"
             autocomplete="off"
             (keypress)="onEnterPress($event)" />
