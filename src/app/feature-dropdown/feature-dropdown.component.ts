@@ -3,6 +3,7 @@ import { FilterOptionsPipe } from '../filter-options.pipe';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { DropdownOption } from '../util/dropdown-option';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { start } from 'repl';
 
 @Component({
   selector: 'app-feature-dropdown',
@@ -29,10 +30,8 @@ export class FeatureDropdownComponent {
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
-    if (!this.isDropdownOpen) {
-      this.hoveredOptionIndex = -1; // Reset hovered option index when dropdown is closed
+    
     }
-  }
 
   handleOptionClick(option: DropdownOption): void {
     if (this.isMultiSelect) {
@@ -64,8 +63,8 @@ export class FeatureDropdownComponent {
     this.selectedValue = this.chosenOption.text;
     this.lastSelectedOption = this.chosenOption;
     this.selectedOption.emit(this.chosenOption);
-    this.isDropdownOpen = false;
     this.searchInput = '';
+
   }
 
   isOptionSelected(option: DropdownOption): boolean {
@@ -114,7 +113,25 @@ export class FeatureDropdownComponent {
   // Handle keyboard events
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (this.isDropdownOpen && this.data.length > 0) {
+    if (event.key === 'Backspace') {
+      if (this.isMultiSelect && this.selectedValues.length > 0) {
+        // Remove the last selected option
+        const lastSelectedOption = this.selectedValues.pop();
+        // Emit the updated selected options
+        this.selectedOptions.emit(this.selectedValues);
+        if(this.selectedValues.length === 0){
+          this.hoveredOptionIndex = -1;
+        }
+        // Optionally, emit an event indicating that the last selected option was removed
+      } else if (!this.isMultiSelect && this.selectedValue) {
+        this.lastSelectedOption = null;
+        this.selectedOption.emit(this.chosenOption);
+        this.isDropdownOpen = false;
+        if (this.lastSelectedOption === null){
+          this.hoveredOptionIndex = -1;
+        }
+      }
+    }else if (this.isDropdownOpen && this.data.length > 0) {
       if (event.key === 'Escape') {
         this.isDropdownOpen = false;
         this.hoveredOptionIndex = -1;
@@ -134,20 +151,9 @@ export class FeatureDropdownComponent {
         }
       } else if (event.key === 'Enter' && this.hoveredOptionIndex !== null) {
         this.handleOptionClick(this.data[this.hoveredOptionIndex]);
-      } else if (event.key === 'Backspace') {
-        event.preventDefault(); // Prevent browser navigation
-        if (this.isMultiSelect && this.selectedValues.length > 0) {
-          // Remove the last selected option
-          const lastSelectedOption = this.selectedValues.pop();
-          // Emit the updated selected options
-          this.selectedOptions.emit(this.selectedValues);
-          // Optionally, emit an event indicating that the last selected option was removed
-        } else if (!this.isMultiSelect && this.selectedValue) {
-          this.lastSelectedOption = null;
-          this.selectedOption.emit(this.chosenOption);
-          this.isDropdownOpen = false;
-          this.hoveredOptionIndex = -1;
-        }
+        const start = Math.max(0, this.hoveredOptionIndex - 4);
+        const end = Math.min(this.data.length - 1, this.hoveredOptionIndex+1);
+        this.viewport.setRenderedRange({start: this.hoveredOptionIndex-4, end: this.hoveredOptionIndex+1});
       }
     }
   }

@@ -1,6 +1,7 @@
 <div class="dropdown-container">
   <div *ngIf="isMultiSelect; else singleSelect" 
         (click)="toggleDropdown()" 
+        (keypress)="onEnterPress($event)" 
         class="button button-with-chips" 
         [tabindex]="selectedValues.length > 0 ? -1 : 0">
         <app-chips *ngFor="let selectedOption of selectedValues" 
@@ -12,8 +13,7 @@
                 id="search_box" 
                 placeholder="Search..." 
                 (input)="onSearchInputChange($event)"
-                autocomplete="off"
-                (keypress)="onEnterPress($event)" />  
+                autocomplete="off"/>  
       </div>
   <ng-template #singleSelect>
     <input type="text" 
