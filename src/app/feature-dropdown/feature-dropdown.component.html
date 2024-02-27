@@ -25,16 +25,18 @@
             autocomplete="off"
             (keypress)="onEnterPress($event)" />
   </ng-template>
-<div *ngIf="isDropdownOpen" class="dropdown-options">
-  <cdk-virtual-scroll-viewport itemSize="28" class="virtual-scroll-container" >
+<div *ngIf="isDropdownOpen" class="dropdown-options" 
+  [ngClass]="{'disable-mouse-event': disableMouseEvent, 
+              'enable-mouse-event': !disableMouseEvent}">
+  <cdk-virtual-scroll-viewport itemSize="28" class="virtual-scroll-container"  >
     <div *cdkVirtualFor="let option of data | filterOptions: searchInput; let i = index"
          (click)="handleOptionClick(option)"
          [class.hovered]="i === hoveredOptionIndex"
          [class.selected]="isOptionSelected(option)"
-         (mouseenter)="hoveredOptionIndex = i"
-         (mouseleave)="hoveredOptionIndex = -1"
+         (mouseenter)="handelMouseEnter(i)"
+         (scroll)="handelMouseEnter(i)"
          class="virtual-scroll-item"
-         [ngClass]="{ 'last-selected': option === lastSelectedOption, 'selected': isOptionSelected(option) }">
+         [ngClass]="{ 'last-selected': option === lastSelectedOption}">
       <li value="option.value">{{ option.text }}</li>
     </div>
   </cdk-virtual-scroll-viewport>

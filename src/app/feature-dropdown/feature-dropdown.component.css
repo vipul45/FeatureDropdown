@@ -98,7 +98,7 @@
   margin-right: 10px;
 }
 
-li:hover {
+.enable-mouse-event li:hover {
   background-color: rgb(2, 103, 255);
   color: aliceblue;
 }
@@ -111,7 +111,6 @@ li:hover {
 .searchInput {
   border: 1px solid lightgrey;
   border-radius: 7px;
-  margin: 0.5%;
   width: 98.5%;
   height: 1.7rem;
 }
@@ -175,4 +174,13 @@ li:hover {
 }
 .button {
   outline: none;
+}
+.dropdown-option:focus {
+  background-color: blue;
+  color: #fff;
+}
+
+.keyboard-navigation .dropdown-option:hover {
+  background-color: inherit;
+  color: inherit;
 }
