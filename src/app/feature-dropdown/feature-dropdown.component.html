@@ -20,14 +20,18 @@
             class="button searchInput" 
             (click)="toggleDropdown()" 
             placeholder="Select value" 
-            [value]="selectedValue" 
             (input)="onSearchInputChange($event)"
             autocomplete="off"
             (keypress)="onEnterPress($event)" />
   </ng-template>
 <div *ngIf="isDropdownOpen" class="dropdown-options" 
   [ngClass]="{'disable-mouse-event': disableMouseEvent, 
-              'enable-mouse-event': !disableMouseEvent}">
+              'enable-mouse-event': !disableMouseEvent}"
+  [class.has-header]="showHeader">
+  <div *ngIf="showHeader" class="dropdown-header">
+    {{ headerText }}
+  </div>
+  
   <cdk-virtual-scroll-viewport itemSize="28" class="virtual-scroll-container"  >
     <div *cdkVirtualFor="let option of data | filterOptions: searchInput; let i = index"
          (click)="handleOptionClick(option)"

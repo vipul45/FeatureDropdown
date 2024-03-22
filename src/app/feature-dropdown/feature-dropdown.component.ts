@@ -1,6 +1,7 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild,Renderer2 } from '@angular/core';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { DropdownOption } from '../util/dropdown-option';
+import { text } from 'stream/consumers';
 
 @Component({
   selector: 'app-feature-dropdown',
@@ -15,7 +16,9 @@ export class FeatureDropdownComponent {
   @ViewChild('button', { static: true }) button: ElementRef | undefined;
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport | undefined;
   @Input() isMultiSelect: boolean = false;
+  @Input() startElement:boolean = false;
   @Input() data: DropdownOption[] = [];
+  @Input() showHeader:  boolean = false;
   @Output() selectedOption: EventEmitter<DropdownOption> = new EventEmitter();
   @Output() selectedOptions: EventEmitter<DropdownOption[]> = new EventEmitter<DropdownOption[]>();
 
@@ -24,13 +27,13 @@ export class FeatureDropdownComponent {
   selectedValues: DropdownOption[] = [];
   isDropdownOpen = false;
   searchInput: string;
-  hoveredOptionIndex = -1;
+  hoveredOptionIndex = 0;
   mouseHoveredIndex=-1;
   chosenOption:  DropdownOption;
   disableMouseEvent = false;
+  headerText: string;
 
-
-  constructor(private elementRef: ElementRef) {
+  constructor(private elementRef: ElementRef,private renderer:Renderer2) {
     this.elementRef.nativeElement.ownerDocument.addEventListener('wheel', this.handleMouseWheel, { passive: false });
   }
   ngOnDestroy() {
@@ -43,7 +46,7 @@ export class FeatureDropdownComponent {
       const scrollDirection = event.deltaY > 0 ? 1 : -1; // 1 for down, -1 for up
       const currentRange = this.viewport.getRenderedRange();
       const itemsInView = Math.floor(this.viewport.getViewportSize() / this.getItemHeight());
-      const step = 5; // Incremental step size
+      const step = 1; // Incremental step size
   
       let startIndex = currentRange.start + scrollDirection * step;
       let endIndex = startIndex + itemsInView;
@@ -73,7 +76,8 @@ export class FeatureDropdownComponent {
   }
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
-    }
+    this.headerText = this.isMultiSelect ? 'Multi Select' : 'Single Select';
+  }
 
 
   handleOptionClick(option: DropdownOption): void {
