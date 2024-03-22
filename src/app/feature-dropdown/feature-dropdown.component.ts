@@ -1,9 +1,7 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
-import { FilterOptionsPipe } from '../filter-options.pipe';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild,Renderer2 } from '@angular/core';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { DropdownOption } from '../util/dropdown-option';
-import { ChangeDetectionStrategy } from '@angular/core';
-import { start } from 'repl';
+import { text } from 'stream/consumers';
 
 @Component({
   selector: 'app-feature-dropdown',
@@ -11,10 +9,16 @@ import { start } from 'repl';
   styleUrls: ['./feature-dropdown.component.css'],
 })
 export class FeatureDropdownComponent {
+  getItemHeight() {
+    return 28;
+  }
+
   @ViewChild('button', { static: true }) button: ElementRef | undefined;
   @ViewChild(CdkVirtualScrollViewport) viewport: CdkVirtualScrollViewport | undefined;
   @Input() isMultiSelect: boolean = false;
+  @Input() startElement:boolean = false;
   @Input() data: DropdownOption[] = [];
+  @Input() showHeader:  boolean = false;
   @Output() selectedOption: EventEmitter<DropdownOption> = new EventEmitter();
   @Output() selectedOptions: EventEmitter<DropdownOption[]> = new EventEmitter<DropdownOption[]>();
 
@@ -23,15 +27,58 @@ export class FeatureDropdownComponent {
   selectedValues: DropdownOption[] = [];
   isDropdownOpen = false;
   searchInput: string;
-  hoveredOptionIndex = -1;
+  hoveredOptionIndex = 0;
+  mouseHoveredIndex=-1;
   chosenOption:  DropdownOption;
+  disableMouseEvent = false;
+  headerText: string;
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(private elementRef: ElementRef,private renderer:Renderer2) {
+    this.elementRef.nativeElement.ownerDocument.addEventListener('wheel', this.handleMouseWheel, { passive: false });
+  }
+  ngOnDestroy() {
+    // Remove the wheel event listener when the component is destroyed
+    this.elementRef.nativeElement.ownerDocument.removeEventListener('wheel', this.handleMouseWheel);
+  }
+  handleMouseWheel = (event: WheelEvent) => {
+    event.preventDefault();
+    if (!this.disableMouseEvent && this.viewport) {
+      const scrollDirection = event.deltaY > 0 ? 1 : -1; // 1 for down, -1 for up
+      const currentRange = this.viewport.getRenderedRange();
+      const itemsInView = Math.floor(this.viewport.getViewportSize() / this.getItemHeight());
+      const step = 1; // Incremental step size
+  
+      let startIndex = currentRange.start + scrollDirection * step;
+      let endIndex = startIndex + itemsInView;
+  
+      // Ensure that the start and end indices are within the bounds of the data array
+      startIndex = Math.max(0, Math.min(startIndex, this.data.length - itemsInView));
+      endIndex = Math.min(this.data.length, startIndex + itemsInView);
+  
+      // Set the new rendered range
+      this.setViewportIndices(startIndex, endIndex);
+    }
+  }
 
+  handelMouseEnter(index: number) {
+    const value = this.hoveredOptionIndex;
+    if(!this.disableMouseEvent){
+      this.hoveredOptionIndex = index;
+      this.mouseHoveredIndex = index;
+    }
+  }
+  viewportActive(){
+    if(this.viewport){
+      const start = this.viewport.getRenderedRange().start;
+      const end = start + 5;
+      this.setViewportIndices(start, end);
+    }
+  }
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
-    
-    }
+    this.headerText = this.isMultiSelect ? 'Multi Select' : 'Single Select';
+  }
+
 
   handleOptionClick(option: DropdownOption): void {
     if (this.isMultiSelect) {
@@ -64,6 +111,7 @@ export class FeatureDropdownComponent {
     this.lastSelectedOption = this.chosenOption;
     this.selectedOption.emit(this.chosenOption);
     this.searchInput = '';
+    this.setViewportIndices(0,5);
 
   }
 
@@ -96,12 +144,32 @@ export class FeatureDropdownComponent {
       this.button.nativeElement.classList.toggle('has-chips', hasChips);
     }
   }
+  @HostListener('document:mousemove', ['$event'])
+  handleMouseMove(event: MouseEvent) {
+    if(event){
+      this.disableMouseEvent = false;
+    }
+}
 
+  @HostListener('document:mouseup', ['$event'])
+  handleMouseUp(event: MouseEvent) {
+    if(event){
+      this.disableMouseEvent = false;
+    }
+  }
+  @HostListener('document:mousedown', ['$event'])
+  handleMouseDown(event: MouseEvent) {
+    if(event){
+      this.disableMouseEvent = false;
+    }
+  }
+  
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: Event) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.isDropdownOpen = false;
     }
+    this.hoveredOptionIndex = -1;
   }
 
   @HostListener('document:keydown',['$event'])
@@ -109,10 +177,15 @@ export class FeatureDropdownComponent {
     if(!this.isDropdownOpen && event.key === 'Enter'){
       this.isDropdownOpen = !this.isDropdownOpen;
       }
+      this.viewportActive();
   }
   // Handle keyboard events
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
+    if(event){
+      this.disableMouseEvent = true; 
+      this.viewportActive();
+    }
     if (event.key === 'Backspace') {
       if (this.isMultiSelect && this.selectedValues.length > 0) {
         // Remove the last selected option
@@ -139,21 +212,31 @@ export class FeatureDropdownComponent {
         event.preventDefault(); // Prevent scrolling the page
         const direction = event.key === 'ArrowDown' ? 1 : -1;
         this.hoveredOptionIndex = this.getValidIndex(this.hoveredOptionIndex !== null ? this.hoveredOptionIndex + direction : direction);
-  
+        const size = this.viewport.getViewportSize();
+        if(size >= 5){
+          const start = this.viewport.getRenderedRange().start;
+          const end = start + 5;
+          this.viewport.setRenderedRange({start, end});
+        }
         if (this.hoveredOptionIndex >= 0 && this.hoveredOptionIndex < this.data.length) {
           const threshold = 4; // Define your threshold here
-          if (this.hoveredOptionIndex >= threshold) {
             // Calculate the start and end index for the viewport
-            const startIndex = Math.max(0, this.hoveredOptionIndex - threshold);
-            const endIndex = Math.min(this.data.length - 1, this.hoveredOptionIndex + threshold);
-            this.setViewportIndices(startIndex, endIndex);
+            const range = this.viewport.getRenderedRange()
+            if (this.hoveredOptionIndex < range.start || this.hoveredOptionIndex >= range.end) {
+              if(direction === 1){
+                const start = Math.max(0,this.hoveredOptionIndex-threshold);
+                const end  = Math.min(this.data.length-1,this.hoveredOptionIndex + 1)
+                this.setViewportIndices(start,end);
+              }else{
+                const start = Math.max(0,this.hoveredOptionIndex);
+                const end = Math.min(this.data.length-1,this.hoveredOptionIndex+threshold+1);
+                this.setViewportIndices(start,end);
+              }
+            }
           }
-        }
       } else if (event.key === 'Enter' && this.hoveredOptionIndex !== null) {
         this.handleOptionClick(this.data[this.hoveredOptionIndex]);
-        const start = Math.max(0, this.hoveredOptionIndex - 4);
-        const end = Math.min(this.data.length - 1, this.hoveredOptionIndex+1);
-        this.viewport.setRenderedRange({start: this.hoveredOptionIndex-4, end: this.hoveredOptionIndex+1});
+        this.setViewportIndices(0,5);
       }
     }
   }
